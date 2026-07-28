@@ -48,8 +48,12 @@ async function init() {
 
   const app = initializeApp(firebaseConfig);
   db = database.getDatabase(app);
-  const credential = await auth.signInAnonymously(auth.getAuth(app));
-  authUser = credential.user;
+  const authInstance = auth.getAuth(app);
+  await authInstance.authStateReady();
+  authUser = authInstance.currentUser;
+  if (!authUser) {
+    authUser = (await auth.signInAnonymously(authInstance)).user;
+  }
   api = { ...database, ...auth };
 }
 
