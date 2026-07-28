@@ -1,1 +1,41 @@
-{"rules":{"rooms":{"$room":{".read":"auth != null",".write":"auth != null","players":{"$player":{".validate":"newData.hasChildren(['nickname','score','correct','answered','joinedAt']) && newData.child('nickname').isString() && newData.child('nickname').val().length <= 18 && newData.child('score').isNumber() && newData.child('score').val() >= 0"}},"answers":{"$question":{"$player":{".validate":"newData.hasChildren(['choice','correct','points','elapsedMs','submittedAt']) && newData.child('choice').isNumber() && newData.child('choice').val() >= 0 && newData.child('choice').val() <= 3 && newData.child('points').isNumber() && newData.child('points').val() >= 0 && newData.child('points').val() <= 1000"}}}}}}}
+{
+  "rules": {
+    ".read": false,
+    ".write": false,
+    "rooms": {
+      "$room": {
+        ".read": "auth != null",
+        ".write": "auth != null && ((!data.exists() && newData.child('hostUid').val() === auth.uid) || data.child('hostUid').val() === auth.uid)",
+        ".validate": "newData.hasChildren(['code','hostUid','status','phase','createdAt','questionIds','questionIndex','durationSeconds']) && newData.child('code').val() === $room && newData.child('hostUid').isString() && newData.child('durationSeconds').isNumber() && newData.child('durationSeconds').val() >= 10 && newData.child('durationSeconds').val() <= 60",
+        "players": {
+          "$player": {
+            ".write": "auth != null && auth.uid === $player && !data.exists() && root.child('rooms').child($room).child('status').val() === 'lobby' && newData.child('score').val() === 0 && newData.child('correct').val() === 0 && newData.child('answered').val() === 0",
+            ".validate": "newData.hasChildren(['nickname','score','correct','answered','joinedAt','lastSeen'])",
+            "nickname": { ".validate": "newData.isString() && newData.val().length >= 2 && newData.val().length <= 18" },
+            "score": { ".validate": "newData.isNumber() && newData.val() >= 0" },
+            "correct": { ".validate": "newData.isNumber() && newData.val() >= 0" },
+            "answered": { ".validate": "newData.isNumber() && newData.val() >= 0" },
+            "joinedAt": { ".validate": "newData.isNumber()" },
+            "lastSeen": { ".validate": "newData.isNumber()" },
+            "$other": { ".validate": false }
+          }
+        },
+        "answers": {
+          "$question": {
+            "$player": {
+              ".write": "auth != null && auth.uid === $player && !data.exists() && root.child('rooms').child($room).child('phase').val() === 'question' && $question === root.child('rooms').child($room).child('questionIndex').val()+'' && !newData.hasChild('correct') && !newData.hasChild('points') && !newData.hasChild('scoredAt')",
+              ".validate": "newData.hasChildren(['choice','elapsedMs','submittedAt'])",
+              "choice": { ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 3" },
+              "elapsedMs": { ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= root.child('rooms').child($room).child('durationSeconds').val() * 1000 + 5000" },
+              "submittedAt": { ".validate": "newData.isNumber() && newData.val() <= now + 5000 && newData.val() >= root.child('rooms').child($room).child('questionStartedAt').val() - 5000" },
+              "correct": { ".validate": "newData.isBoolean()" },
+              "points": { ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 1000" },
+              "scoredAt": { ".validate": "newData.isNumber()" },
+              "$other": { ".validate": false }
+            }
+          }
+        }
+      }
+    }
+  }
+}
