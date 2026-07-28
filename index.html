@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#063f5b">
+  <meta name="description" content="Interactive tester for the Inclusive Health Open House live trivia game.">
+  <title>Inclusive Health Open House Trivia</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main class="page">
+    <div class="demo-banner"><strong>Interactive tester:</strong> this first published version demonstrates the appearance and flow. The host and player views are connected only inside this page until the live database is added.</div>
+
+    <nav class="preview-tabs" aria-label="Preview controls">
+      <button id="player-tab" class="tab-button active" type="button">Player phone</button>
+      <button id="host-tab" class="tab-button" type="button">Host controls</button>
+      <button id="reset-demo" class="tab-button" type="button">Restart preview</button>
+    </nav>
+
+    <div class="preview-grid">
+      <article class="phone" aria-live="polite">
+        <div class="rainbow-strip"><span></span><span></span><span></span><span></span><span></span><span></span></div>
+        <header class="brandbar">
+          <div class="brand-lockup">
+            <img class="brand-logo" src="https://images.squarespace-cdn.com/content/v1/674f7e31ce16dd4264900e71/3a376c65-bc24-4843-884c-dce5434db46b/8030910E-7BFC-44A9-BD51-C8914696BE5C-min.png" alt="Inclusive Health logo">
+            <div>
+              <div class="brand-name">INCLUSIVE HEALTH</div>
+              <div class="tagline">A Better Class of Healthcare</div>
+            </div>
+          </div>
+          <div class="event-badge">OPEN HOUSE<br>OCT. 1, 2026</div>
+        </header>
+
+        <section id="join-screen">
+          <div class="hero">
+            <span class="eyebrow">LIVE • CELEBRATORY • PHONE-FRIENDLY</span>
+            <h1>How Well Do You Know Inclusive Health?</h1>
+            <p>Join the room, answer together, and watch the live leaderboard as we celebrate one year in our Lynnwood home.</p>
+          </div>
+          <div class="rainbow-strip"><span></span><span></span><span></span><span></span><span></span><span></span></div>
+          <div class="content">
+            <div class="fact-grid">
+              <div class="fact"><strong>Live</strong><span>synchronized play</span></div>
+              <div class="fact"><strong>24</strong><span>clinic questions</span></div>
+              <div class="fact"><strong>0</strong><span>personal details</span></div>
+            </div>
+            <div class="notice"><strong>Choose a fun nickname or initials.</strong> Please do not enter your full name or any health information.</div>
+            <label for="room-code">Room code</label>
+            <input id="room-code" value="OPEN26" maxlength="6" autocomplete="off">
+            <label for="nickname">Nickname or initials</label>
+            <input id="nickname" value="RainbowFox" maxlength="18" autocomplete="off">
+            <button id="join-button" class="primary-button" type="button">Join the celebration</button>
+          </div>
+        </section>
+
+        <section id="waiting-screen" class="hidden">
+          <div class="content center">
+            <div class="party-icon">🎉</div>
+            <div class="category">You're in!</div>
+            <h2>Waiting for the host to begin</h2>
+            <div class="room-code">OPEN26</div>
+            <p class="muted"><span id="waiting-count">12</span> players joined</p>
+            <p>Keep this screen open. The first question will appear automatically.</p>
+          </div>
+        </section>
+
+        <section id="question-screen" class="hidden">
+          <div class="content">
+            <div class="status-row"><span>Question 1 of 10</span><span class="score-chip">Score: 0</span></div>
+            <div class="progress"><span></span></div>
+            <div class="timer-label"><span>Time remaining</span><span>14s</span></div>
+            <div class="timer-track"><span></span></div>
+            <div class="category">Mission & Values</div>
+            <h2 class="question">What is Inclusive Health’s official tagline?</h2>
+            <div class="answer-list">
+              <button class="answer-button" type="button" data-answer="0"><span class="answer-letter">A</span>Healthcare for Every Body</button>
+              <button class="answer-button" type="button" data-answer="1"><span class="answer-letter">B</span>A Better Class of Healthcare</button>
+              <button class="answer-button" type="button" data-answer="2"><span class="answer-letter">C</span>Care Without Compromise</button>
+              <button class="answer-button" type="button" data-answer="3"><span class="answer-letter">D</span>Healthcare Made Simple</button>
+            </div>
+            <div id="feedback" class="feedback hidden"><strong>Correct!</strong><br>Inclusive Health’s official tagline is “A Better Class of Healthcare.”</div>
+          </div>
+        </section>
+
+        <section id="leaderboard-screen" class="hidden">
+          <div class="content center">
+            <div class="party-icon">⭐</div>
+            <div class="category">Live leaderboard</div>
+            <h2>Current standings</h2>
+            <table>
+              <thead><tr><th>Rank</th><th>Player</th><th>Points</th></tr></thead>
+              <tbody>
+                <tr><td>1</td><td>CareBear</td><td>980</td></tr>
+                <tr class="you"><td>2</td><td>RainbowFox — You</td><td>925</td></tr>
+                <tr><td>3</td><td>HealthHero</td><td>870</td></tr>
+              </tbody>
+            </table>
+            <p class="muted">The next question will appear automatically.</p>
+          </div>
+        </section>
+      </article>
+
+      <aside id="host-panel" class="host-panel hidden">
+        <section class="host-card">
+          <div class="category">Host preview</div>
+          <h2>Room is open</h2>
+          <div class="host-code">OPEN26</div>
+          <p class="muted"><span id="host-player-count">12</span> players joined</p>
+          <div class="host-actions">
+            <button id="host-start" class="primary-button" type="button">Start question</button>
+            <button id="host-reveal" class="secondary-button" type="button">Reveal answer</button>
+            <button id="host-board" class="secondary-button" type="button">Show leaderboard</button>
+          </div>
+        </section>
+
+        <section class="host-card">
+          <h3>Live responses</h3>
+          <p class="muted">9 of 12 players answered</p>
+          <div class="host-answer-summary">
+            <div class="response-row"><div class="response-label"><span>A. Healthcare for Every Body</span><span>1</span></div><div class="response-track"><div class="response-fill" style="width:11%"></div></div></div>
+            <div class="response-row"><div class="response-label"><span>B. A Better Class of Healthcare</span><span>7</span></div><div class="response-track"><div class="response-fill" style="width:78%;background:var(--green)"></div></div></div>
+            <div class="response-row"><div class="response-label"><span>C. Care Without Compromise</span><span>1</span></div><div class="response-track"><div class="response-fill" style="width:11%"></div></div></div>
+          </div>
+        </section>
+
+        <section class="host-card">
+          <h3>How this tester works</h3>
+          <p>Use the host buttons to move the phone through the waiting room, question, answer reveal, and leaderboard. The next phase will connect separate devices through a live database.</p>
+        </section>
+      </aside>
+    </div>
+
+    <footer>Inclusive Health • Lynnwood, Washington • A Better Class of Healthcare</footer>
+  </main>
+  <script src="app.js"></script>
+</body>
+</html>
