@@ -1,4 +1,4 @@
-import { QUESTION_BY_ID } from './questions.js';
+import { QUESTION_BANK, QUESTION_BY_ID } from './questions.js?v=20260807-1';
 import {
   backendMode,
   currentUserId,
@@ -218,6 +218,7 @@ function stopTimer() {
   state.timer = null;
 }
 
+$('player-question-bank-count').textContent = QUESTION_BANK.length;
 $('join-button').addEventListener('click', join);
 $('room-code-input').addEventListener('input', (event) => {
   event.target.value = cleanCode(event.target.value);
