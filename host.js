@@ -1,4 +1,4 @@
-import { QUESTION_BY_ID, chooseQuestionIds } from './questions.js';
+import { QUESTION_BANK, QUESTION_BY_ID, chooseQuestionIds } from './questions.js?v=20260807-1';
 import {
   backendMode,
   currentUserId,
@@ -35,6 +35,14 @@ const state = {
 const sections = ['setup-section', 'lobby-section', 'game-section', 'finish-section'];
 const show = (id) => sections.forEach((section) => $(section).classList.toggle('hidden', section !== id));
 
+function setupQuestionBankDisplay() {
+  const bankCount = QUESTION_BANK.length;
+  const categoryCount = new Set(QUESTION_BANK.map((question) => question.category)).size;
+  $('question-bank-count').textContent = bankCount;
+  $('category-count').textContent = categoryCount;
+  $('all-questions-option').textContent = `All ${bankCount} questions`;
+}
+
 function mode() {
   if (backendMode === 'demo') {
     $('mode-banner').classList.remove('hidden');
@@ -46,13 +54,16 @@ async function createRoom() {
   let code = makeCode();
   while (await getValue(`rooms/${code}`)) code = makeCode();
 
+  const selectedQuestionCount = $('question-count-select').value;
+  const questionCount = selectedQuestionCount === 'all' ? QUESTION_BANK.length : Number(selectedQuestionCount);
+
   await setValue(`rooms/${code}`, {
     code,
     hostUid: currentUserId() || 'demo-host',
     status: 'lobby',
     phase: 'lobby',
     createdAt: serverNow(),
-    questionIds: chooseQuestionIds(Number($('question-count-select').value)),
+    questionIds: chooseQuestionIds(questionCount),
     questionIndex: -1,
     durationSeconds: Number($('duration-select').value),
     players: {},
@@ -280,6 +291,7 @@ function stopTimer() {
   state.timer = null;
 }
 
+setupQuestionBankDisplay();
 $('create-room-button').addEventListener('click', createRoom);
 $('start-button').addEventListener('click', startGame);
 $('reveal-button').addEventListener('click', reveal);
