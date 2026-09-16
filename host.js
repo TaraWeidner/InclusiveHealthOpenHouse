@@ -75,6 +75,10 @@ async function createRoom() {
   listen();
 }
 
+function playerJoinUrl() {
+  return `${location.origin}${location.pathname.replace('host.html', '')}?room=${state.code}`;
+}
+
 function listen() {
   state.unsubRoom?.();
   state.unsubPlayers?.();
@@ -148,10 +152,10 @@ function renderRoom() {
   if (room.status === 'lobby') {
     show('lobby-section');
     $('host-room-code').textContent = state.code;
-    const joinUrl = `${location.origin}${location.pathname.replace('host.html', '')}?room=${state.code}`;
+    const joinUrl = playerJoinUrl();
     $('join-url').textContent = joinUrl;
     $('join-link').href = `./?room=${state.code}`;
-    renderQr(joinUrl);
+    renderQr(joinUrl, 'qr-target', 240);
     return;
   }
 
@@ -163,6 +167,11 @@ function renderRoom() {
   }
 
   show('game-section');
+  const joinUrl = playerJoinUrl();
+  $('live-room-code').textContent = state.code;
+  $('live-join-link').href = `./?room=${state.code}`;
+  renderQr(joinUrl, 'live-qr-target', 170);
+
   const question = QUESTION_BY_ID[room.questionIds?.[room.questionIndex]];
   if (!question) return;
 
@@ -229,14 +238,15 @@ function renderResponses() {
   });
 }
 
-function renderQr(url) {
-  const target = $('qr-target');
+function renderQr(url, targetId = 'qr-target', size = 240) {
+  const target = $(targetId);
+  if (!target) return;
   target.innerHTML = '';
   if (window.QRCode) {
     new window.QRCode(target, {
       text: url,
-      width: 240,
-      height: 240,
+      width: size,
+      height: size,
       correctLevel: window.QRCode.CorrectLevel.M,
     });
   }
