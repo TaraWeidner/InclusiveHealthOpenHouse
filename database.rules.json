@@ -9,7 +9,7 @@
         ".validate": "newData.hasChildren(['code','hostUid','status','phase','createdAt','questionIds','questionIndex','durationSeconds']) && newData.child('code').val() === $room && newData.child('hostUid').isString() && newData.child('durationSeconds').isNumber() && newData.child('durationSeconds').val() >= 10 && newData.child('durationSeconds').val() <= 60",
         "players": {
           "$player": {
-            ".write": "auth != null && auth.uid === $player && !data.exists() && root.child('rooms').child($room).child('status').val() === 'lobby' && newData.child('score').val() === 0 && newData.child('correct').val() === 0 && newData.child('answered').val() === 0",
+            ".write": "auth != null && auth.uid === $player && !data.exists() && (root.child('rooms').child($room).child('status').val() === 'lobby' || root.child('rooms').child($room).child('status').val() === 'active') && newData.child('score').val() === 0 && newData.child('correct').val() === 0 && newData.child('answered').val() === 0",
             ".validate": "newData.hasChildren(['nickname','score','correct','answered','joinedAt','lastSeen'])",
             "nickname": { ".validate": "newData.isString() && newData.val().length >= 2 && newData.val().length <= 18" },
             "score": { ".validate": "newData.isNumber() && newData.val() >= 0" },
