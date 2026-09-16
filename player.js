@@ -57,7 +57,8 @@ async function join() {
 
   const room = await getValue(`rooms/${code}`);
   if (!room) return error('That room could not be found. Check the code and try again.');
-  if (room.status !== 'lobby') return error('That game has already started or finished.');
+  if (room.status === 'finished') return error('That game has already finished.');
+  if (room.status !== 'lobby' && room.status !== 'active') return error('That room is not accepting players right now.');
 
   state.code = code;
   state.nickname = nickname;
@@ -164,8 +165,10 @@ async function renderQuestion(room) {
     stopTimer();
     const correct = state.selected === question.correct;
     $('feedback').className = 'feedback';
-    $('feedback-title').textContent = correct ? 'Correct — nicely done!' : state.selected === null ? 'Time is up!' : 'Good guess!';
-    $('feedback-text').textContent = question.explanation;
+    $('feedback-title').textContent = correct ? 'Correct — nicely done!' : state.selected === null ? 'You joined in time for the reveal!' : 'Good guess!';
+    $('feedback-text').textContent = state.selected === null
+      ? `${question.explanation} Your first chance to score starts with the next question.`
+      : question.explanation;
   } else if (state.selected !== null) {
     $('feedback').className = 'feedback';
     $('feedback-title').textContent = 'Answer locked in!';
